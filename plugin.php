@@ -1,4 +1,5 @@
 <?php
+
 namespace ElementorHelloWorld;
 
 /**
@@ -12,7 +13,7 @@ class Plugin {
 	/**
 	 * Instance
 	 *
-	 * @since 1.2.0
+	 * @since  1.2.0
 	 * @access private
 	 * @static
 	 *
@@ -25,15 +26,16 @@ class Plugin {
 	 *
 	 * Ensures only one instance of the class is loaded or can be loaded.
 	 *
-	 * @since 1.2.0
+	 * @return Plugin An instance of the class.
+	 * @since  1.2.0
 	 * @access public
 	 *
-	 * @return Plugin An instance of the class.
 	 */
 	public static function instance() {
 		if ( is_null( self::$_instance ) ) {
 			self::$_instance = new self();
 		}
+
 		return self::$_instance;
 	}
 
@@ -42,7 +44,7 @@ class Plugin {
 	 *
 	 * Load required plugin core files.
 	 *
-	 * @since 1.2.0
+	 * @since  1.2.0
 	 * @access public
 	 */
 	public function widget_scripts() {
@@ -54,13 +56,25 @@ class Plugin {
 	 *
 	 * Load widgets files
 	 *
-	 * @since 1.2.0
+	 * @since  1.2.0
 	 * @access private
 	 */
 	private function include_widgets_files() {
 		require_once( __DIR__ . '/widgets/hello-world.php' );
 		require_once( __DIR__ . '/widgets/inline-editing.php' );
-        require_once(__DIR__ . '/widgets/oembed.php');
+		require_once( __DIR__ . '/widgets/oembed.php' );
+	}
+
+	/**
+	 * Include Dynamic tags files
+	 *
+	 * Load Dynamic tags files
+	 *
+	 * @since  1.2.0
+	 * @access private
+	 */
+	private function include_dynamics_files() {
+		require_once( __DIR__ . '/dynamics/price.php' );
 	}
 
 	/**
@@ -68,7 +82,7 @@ class Plugin {
 	 *
 	 * Register new Elementor widgets.
 	 *
-	 * @since 1.2.0
+	 * @since  1.2.0
 	 * @access public
 	 */
 	public function register_widgets() {
@@ -78,7 +92,20 @@ class Plugin {
 		// Register Widgets
 		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new Widgets\Hello_World() );
 		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new Widgets\Inline_Editing() );
-        \Elementor\Plugin::instance()->widgets_manager->register_widget_type( new Widgets\Oembed() );
+		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new Widgets\Oembed() );
+	}
+
+	/**
+	 * Register Dynamic Tags
+	 *
+	 * Register new Elementor dynamic tags.
+	 *
+	 * @since  1.2.0
+	 * @access public
+	 */
+	public function register_dynamics( $dynamic_tags ) {
+		$this->include_dynamics_files();
+		$dynamic_tags->register_tag( 'ElementorHelloWorld\Dynamics\Price_Dynamic_Tag' );
 	}
 
 	/**
@@ -86,7 +113,7 @@ class Plugin {
 	 *
 	 * Register plugin action hooks and filters
 	 *
-	 * @since 1.2.0
+	 * @since  1.2.0
 	 * @access public
 	 */
 	public function __construct() {
@@ -96,6 +123,9 @@ class Plugin {
 
 		// Register widgets
 		add_action( 'elementor/widgets/widgets_registered', [ $this, 'register_widgets' ] );
+
+		// Register dynamic tags
+		add_action( 'elementor/dynamic_tags/register_tags', [ $this, 'register_dynamics' ] );
 	}
 }
 
